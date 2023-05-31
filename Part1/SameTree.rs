@@ -1,38 +1,52 @@
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+// 
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::rc::Rc;
+use std::cell::RefCell;
 impl Solution {
-    pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
-        let mut sum = m+n-1;
-        let mut i = m-1;
-        let mut j = n-1;
-
-        while sum >= 0
+    pub fn is_same_tree(p: Option<Rc<RefCell<TreeNode>>>, q: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        
+        match(p, q)
         {
-            if i>=0 && j>=0
-            {
-                if nums1[i as usize] > nums2[j as usize]
+            (None, None) => true,
+            (Some(lewy_node),Some(prawy_node)) => {
+                let lewy = lewy_node.borrow();
+                let prawy = prawy_node.borrow();
+
+                let testLewy = Solution::is_same_tree(lewy.left.clone(), prawy.left.clone());
+                let mut testWart = false;
+                if lewy.val == prawy.val
                 {
-                    nums1[sum as usize] = nums1[i as usize];
-                    sum-=1;
-                    i-=1;
+                    testWart = true;
+                }
+                let testPrawy = Solution::is_same_tree(lewy.right.clone(), prawy.right.clone());
+                
+                if testLewy && testWart && testPrawy
+                {
+                    return true;
                 }
                 else
                 {
-                    nums1[sum as usize] = nums2[j as usize];
-                    sum-=1;
-                    j-=1;  
+                    return false;
                 }
-            }
-            else if i>=0
-            {
-                nums1[sum as usize] = nums1[i as usize];
-                sum-=1;
-                i-=1;
-            } 
-            else 
-            {
-                nums1[sum as usize] = nums2[j as usize];
-                sum-=1;
-                j-=1;
-            }
+
+            },
+            _ => false
         }
     }
 }
